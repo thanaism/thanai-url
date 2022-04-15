@@ -1,5 +1,9 @@
 {
   "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "stylelint.vscode-stylelint",
     "ms-azuretools.vscode-azurefunctions"
-  ]
+  ],
+  "unwantedRecommendations": []
 }

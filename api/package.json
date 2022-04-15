@@ -13,12 +13,12 @@
     "start-azurite": "azurite --silent --location azureStorage --debug azureStorage/debug.log"
   },
   "dependencies": {
+    "@azure/functions": "^2.0.0",
     "@azure/storage-blob": "^12.9.0",
     "http-status-enum": "^1.0.2"
   },
   "devDependencies": {
-    "@azure/functions": "^2.0.0",
     "azurite": "^3.16.0",
-    "typescript": "^4.0.0"
+    "typescript": "^4.6.3"
   }
 }
