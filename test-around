@@ -6,16 +6,8 @@
 #   Riakuto! Project by Klemiwary Books
 
 targetProjects=(
-  "06-lint/04-advanced"
-  "08-component/02-props"
-  "08-component/03-state/01-class"
-  "08-component/03-state/02-state"
-  "08-component/04-lifecycle"
-  "09-hooks/03-effect"
-  "09-hooks/02-state"
-  "09-hooks/03-effect"
-  "09-hooks/04-memoize"
-  "09-hooks/05-custom"
+  "src"
+  "app"
 )
 
 # execute each test
