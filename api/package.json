@@ -15,6 +15,7 @@
   "dependencies": {
     "@azure/functions": "^2.0.0",
     "@azure/storage-blob": "^12.9.0",
+    "axios": "^0.26.1",
     "http-status-enum": "^1.0.2"
   },
   "devDependencies": {

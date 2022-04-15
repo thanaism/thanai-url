@@ -51,31 +51,25 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   const blobServiceClient = BlobServiceClient.fromConnectionString(CONNECTION_STRING);
   const containerClient = blobServiceClient.getContainerClient('$web');
 
-  const longUrl = req.body?.url;
-  if (longUrl == null || !isUrlString(longUrl)) {
-    res.body = {
-      message: 'Query parameter "url" isn\'t configured correctly.',
-    };
+  const url: unknown = req.body?.url;
+  if (typeof url !== 'string' || !isUrlString(url)) {
+    res.body = 'Query parameter "url" isn\'t configured correctly.';
     res.status = HTTP_CODES.BAD_REQUEST;
-    context.log.warn(res.body.message);
-
-    return;
+    return; // eslint-disable-line padding-line-between-statements
   }
-  context.log(`Request URL is "${longUrl}"`);
+  context.log(`Request URL is "${url}"`);
 
-  const userDefinedAlias = req.body?.alias;
-  if (userDefinedAlias != null && !(await validateAlias(userDefinedAlias))) {
-    res.body = {
-      message: 'This "alias" is already in use or in the wrong format.',
-    };
+  const alias: unknown = req.body?.alias;
+  if (typeof alias !== 'string' || !(await validateAlias(alias, BSW_BASE_URL))) {
+    res.body = 'This "alias" is already in use or in the wrong format.';
     res.status = HTTP_CODES.BAD_REQUEST;
-    context.log.warn(res.body.message);
+    context.log.warn(res.body);
 
     return;
   }
 
   const blobName: string =
-    userDefinedAlias != null ? userDefinedAlias : await pickAlias(ALIAS_DEFAULT_LENGTH);
+    alias != null ? alias : await pickAlias(ALIAS_DEFAULT_LENGTH, BSW_BASE_URL);
   const blockBlobClient = containerClient.getBlockBlobClient(blobName);
   context.log('\nUploading to Azure storage as blob:\n\t', blobName);
 
@@ -84,7 +78,7 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
       '<!DOCTYPE html><head><title>redirect</title>' +
       '<meta http-equiv="cache-control" content="no-cache" />' +
       '<meta name="robots" content="noindex,nofollow" />' +
-      `<meta http-equiv="refresh" content="0; url=${longUrl}">` +
+      `<meta http-equiv="refresh" content="0; url=${url}">` +
       '</head><body></body></html>\n';
 
     const linkType: LinkType = getLinkType(req.body?.type);
@@ -95,14 +89,14 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
       tags: { LinkType: linkType },
     };
     const uploadBlobResponse = await blockBlobClient.upload(data, data.length, uploadOptions);
-    context.res!.body = `https://hy.gy/${blobName}`;
+    if (context.res != null) context.res.body = `https://hy.gy/${blobName}`;
 
     context.log('Blob was uploaded successfully. requestId: ', uploadBlobResponse.requestId);
   } catch (err: unknown) {
     if (err instanceof Error) {
       context.log.error(err.message);
-      context.res!.body = `${err.message}`;
-      context.res!.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
+      if (context.res != null) context.res.body = `${err.message}`;
+      if (context.res != null) context.res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
     }
   }
 };

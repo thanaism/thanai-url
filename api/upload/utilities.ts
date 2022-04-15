@@ -12,6 +12,7 @@ const validateConnectionString = (value: string, env: AzureFunctionsEnvironment)
     case 'Development':
       return ok || value === 'UseDevelopmentStorage=true';
     default:
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       throw Error(`"${env}" isn't AzureFunctionsEnvironment.`);
   }
 };
@@ -20,7 +21,7 @@ const isUrlString = (value: string): boolean => /https?:\/\/[\w/:%#$&?()~.=+-]+/
 
 const linkTypeArray = ['OneDay', 'OneMonth', 'Permanent'] as const;
 type LinkType = typeof linkTypeArray[number];
-const getLinkType = (value: string) =>
+const getLinkType = (value: unknown): LinkType =>
   linkTypeArray.some((v) => v === value) ? (value as LinkType) : 'OneDay';
 
 export { AzureFunctionsEnvironment, validateConnectionString, isUrlString, LinkType, getLinkType };
