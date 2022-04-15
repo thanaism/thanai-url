@@ -1,6 +1,6 @@
 build/
 public/
-api/
+api/dist/
 **/coverage/
 **/node_modules/
 **/*.min.js

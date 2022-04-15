@@ -16,9 +16,7 @@ const validateConnectionString = (value: string, env: AzureFunctionsEnvironment)
   }
 };
 
-const isUrlString = (value: string): boolean => {
-  return /https?:\/\/[\w/:%#$&?()~.=+-]+/.test(value);
-};
+const isUrlString = (value: string): boolean => /https?:\/\/[\w/:%#$&?()~.=+-]+/.test(value);
 
 const linkTypeArray = ['OneDay', 'OneMonth', 'Permanent'] as const;
 type LinkType = typeof linkTypeArray[number];

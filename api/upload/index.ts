@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { BlobServiceClient, BlockBlobUploadOptions } from '@azure/storage-blob';
 import HTTP_CODES from 'http-status-enum';
