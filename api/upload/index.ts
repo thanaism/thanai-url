@@ -27,7 +27,8 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   const ENVIRONMENT = process?.env?.AZURE_FUNCTIONS_ENVIRONMENT as AzureFunctionsEnvironment;
   if (CONNECTION_STRING == null || !validateConnectionString(CONNECTION_STRING, ENVIRONMENT)) {
     res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
-    context.log.error('Environment variable "AzureWebJobsStorage" isn\'t configured correctly.');
+    res.body = 'Environment variable "AzureWebJobsStorage" isn\'t configured correctly.';
+    context.log.error(res.body);
 
     return;
   }
@@ -35,9 +36,8 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   const BSW_BASE_URL = process?.env?.BlobStaticWebSiteBaseUrl;
   if (BSW_BASE_URL == null || !isUrlString(BSW_BASE_URL)) {
     res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
-    context.log.error(
-      'Environment variable "BlobStaticWebSiteBaseUrl" isn\'t configured correctly.',
-    );
+    res.body = 'Environment variable "BlobStaticWebSiteBaseUrl" isn\'t configured correctly.';
+    context.log.error(res.body);
 
     return;
   }
@@ -46,7 +46,8 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   const CDN_BASE_URL = process?.env?.CdnBaseUrl;
   if (CDN_BASE_URL == null || !isUrlString(CDN_BASE_URL)) {
     res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
-    context.log.error('Environment variable "CdnBaseUrl" isn\'t configured correctly.');
+    res.body = 'Environment variable "CdnBaseUrl" isn\'t configured correctly.';
+    context.log.error(res.body);
 
     return;
   }
@@ -79,7 +80,8 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   const requestId: string | undefined = await upload(url, CONNECTION_STRING, blobName, linkType);
   if (requestId == null) {
     res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
-    context.log.error('!! Upload failed');
+    res.body = 'Something went wrong with blob upload';
+    context.log.error(res.body);
 
     return;
   }
