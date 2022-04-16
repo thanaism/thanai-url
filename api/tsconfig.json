@@ -8,5 +8,9 @@
     "strict": true,
     "downlevelIteration": true,
     "skipLibCheck": true
-  }
+  },
+  "exclude": [
+    "tests",
+    "jest.config.ts"
+  ]
 }

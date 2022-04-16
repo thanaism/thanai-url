@@ -1,16 +1,15 @@
 import axios from 'axios';
 
-const available = async (alias: string, baseUrl: string): Promise<boolean> => {
-  if (alias == null) return false;
-
-  return axios
-    .get(`${baseUrl}/${alias}`)
+const available = async (alias: string, baseUrl: string): Promise<boolean> =>
+  axios
+    .get(`${baseUrl}${alias}`)
     .then((_) => false)
     .catch((_) => true);
-};
+
+const validateFormat = (alias: string): boolean => /^[\w#/+-]{4,10}$/.test(alias);
 
 const validateAlias = async (alias: string, baseUrl: string): Promise<boolean> => {
-  if (!/[\w#/+-]{4,10}/.test(alias)) return false;
+  if (!validateFormat(alias)) return false;
 
   return available(alias, baseUrl);
 };
@@ -31,4 +30,18 @@ const pickAlias = async (len: number, baseUrl: string): Promise<string> => {
   return recursiveAliasing();
 };
 
-export { validateAlias, pickAlias };
+const getBlobName = async (
+  alias: unknown,
+  defaultLength: number,
+  baseUrl: string,
+): Promise<string> => {
+  // user defined alias is not set
+  if (alias == null || alias === '') return pickAlias(defaultLength, baseUrl);
+  // user defined alias is not string
+  if (typeof alias !== 'string') return '';
+
+  // check availability of user defined alias
+  return (await validateAlias(alias, baseUrl)) ? alias : '';
+};
+
+export { validateAlias, pickAlias, available, validateFormat, getBlobName };

@@ -9,7 +9,9 @@
     "watch": "tsc -w",
     "prestart": "npm run build",
     "start": "func start",
-    "test": "echo \"No tests yet...\"",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "jest --verbose --testPathPattern \"/unit/.+\\.test\\.\"",
+    "test:e2e": "npm run prestart && jest --verbose --testPathPattern \"/e2e/.+\\.test\\.\" --runInBand",
     "start-azurite": "azurite --silent --location azureStorage --debug azureStorage/debug.log"
   },
   "dependencies": {
@@ -19,7 +21,12 @@
     "http-status-enum": "^1.0.2"
   },
   "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@anthonychu/azure-functions-test-utils": "^0.1.0",
     "azurite": "^3.16.0",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0",
     "typescript": "^4.6.3"
   }
 }
