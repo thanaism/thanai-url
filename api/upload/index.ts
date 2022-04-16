@@ -23,7 +23,7 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
     throw Error('context.res does not exist.');
   }
 
-  const CONNECTION_STRING = process?.env?.AzureWebJobsStorage;
+  const CONNECTION_STRING = process?.env?.CONNECTION_STRING;
   const ENVIRONMENT = process?.env?.AZURE_FUNCTIONS_ENVIRONMENT as AzureFunctionsEnvironment;
   if (CONNECTION_STRING == null || !validateConnectionString(CONNECTION_STRING, ENVIRONMENT)) {
     res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
