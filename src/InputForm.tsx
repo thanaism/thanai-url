@@ -16,6 +16,9 @@ const InputForm: VFC = () => {
       .catch(_ => setError(true) // eslint-disable-line
       );
   };
+  const copyLinkToClipboard = async (): Promise<void> => {
+    await navigator.clipboard.writeText(output);
+  }
 
   return (
     <Grid textAlign='center'>
@@ -42,9 +45,16 @@ const InputForm: VFC = () => {
             <Button color='vk' fluid size='medium' onClick={result}>
               <Icon name='sync' />URL Shrink
             </Button>
+
             {output && <Message>
-              <a href={output}>{output.replace('https://', '')}</a>
+              <Grid.Column>
+                <a href={output} target='_blank' rel="noreferrer">{output.replace('https://', '')}</a>
+              </Grid.Column>
+              <Grid.Column>
+                <Button onClick={copyLinkToClipboard}>Copy the link!</Button>
+              </Grid.Column>
             </Message>}
+
           </Segment>
         </Form>
         <Message>
