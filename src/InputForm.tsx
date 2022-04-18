@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import axios from 'axios';
 import { useState, VFC } from 'react';
-import { Grid, Form, Button, Segment, Message, Icon } from 'semantic-ui-react';
+import { Grid, Form, Button, Message, Icon, Segment } from 'semantic-ui-react';
 
 const InputForm: VFC = () => {
   const [input, setInput] = useState('https://');
@@ -9,24 +9,22 @@ const InputForm: VFC = () => {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [previousInput, setPreviousInput] = useState('');
 
   const result = async (): Promise<void> => {
-    if (input === previousInput) {
-      setCopied(false);
+    if (loading) return;
+    if (output) {
       setOutput('');
       setInput('https://');
 
       return;
     }
+
     setLoading(true);
     setCopied(false);
-    setOutput('');
     await axios
       .post(`/api/upload`, { url: input, alias: '' })
       .then((res) => {
         setOutput(res.data);
-        setPreviousInput(input);
       })
       .catch(
         (_) => setError(true), // eslint-disable-line
@@ -43,10 +41,10 @@ const InputForm: VFC = () => {
       <Grid.Column style={{ maxWidth: 600 }}>
         <Message warning>
           <Message.Header>This page is a test product.</Message.Header>
-          Every shrinked URL will be deleted after a day.
+          Every URL will be deleted after a day.
         </Message>
-        <Form size="large">
-          <Segment stacked>
+        <Segment raised>
+          <Form size="large">
             <Form.Input
               fluid
               icon="linkify"
@@ -91,12 +89,17 @@ const InputForm: VFC = () => {
                 </Grid.Column>
               </Message>
             )}
-          </Segment>
-        </Form>
-        <Message>
-          Developer&apos;s blog: &nbsp;{' '}
+          </Form>
+        </Segment>
+        <Message size='small'>
+
+          Blog: &nbsp;
           <a href="https://dev.thanaism.com" target="_blank" rel="noreferrer">
             dev.thanaism
+          </a>
+          &emsp; / &emsp; Github: &nbsp;
+          <a href="https://github.com/thanaism/thanai-url" target="_blank" rel="noreferrer">
+            thanaism
           </a>
         </Message>
       </Grid.Column>
