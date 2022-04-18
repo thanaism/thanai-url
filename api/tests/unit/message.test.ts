@@ -1,6 +1,6 @@
 /* eslint-disable */
 import { TestContext } from '@anthonychu/azure-functions-test-utils';
-import httpTrigger from '../../Message';
+import httpTrigger from '../../message';
 
 describe('Message function unit tests', () => {
   it('should return a greeting with username', async () => {

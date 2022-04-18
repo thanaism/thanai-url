@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # test-around
 #   execute each test in sub-directories projects recursively
@@ -8,6 +8,7 @@
 targetProjects=(
   "src"
   "app"
+  "api"
 )
 
 # execute each test

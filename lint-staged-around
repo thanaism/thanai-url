@@ -30,6 +30,10 @@ stagedProjects=$( \
 # execute each lint-staged
 rootDir=$(pwd | sed -r "s/\/\.git\/hooks//")
 
+if [ ${#stagedProjects[@]} -eq 0 ]; then
+  exit
+fi
+
 for project in ${stagedProjects[@]}; do
   echo "Executing $project lint-staged entry..."
   cd "$rootDir/$project"
