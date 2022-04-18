@@ -1,33 +1,33 @@
-import { getLinkType, isUrlString, validateConnectionString } from '../../Upload/utilities';
+import { getLinkType, validateUrlString, validateConnectionString } from '../../upload/validators';
 
 describe('alias unit tests', () => {
   it('should return true', () => {
-    const result = validateConnectionString('UseDevelopmentStorage=true', 'Development');
+    const result = validateConnectionString('UseDevelopmentStorage=true');
     expect(result).toBe(true);
   });
 
   it('should return false', () => {
-    const result = validateConnectionString('bad string', 'Production');
+    const result = validateConnectionString('bad string');
     expect(result).toBe(false);
   });
 
   it('should return true', () => {
-    const result = isUrlString('https://example.com');
+    const result = validateUrlString('https://example.com');
     expect(result).toBe(true);
   });
 
   it('should return false', () => {
-    const result = isUrlString('htpps://example.com');
+    const result = validateUrlString('htpps://example.com');
     expect(result).toBe(false);
   });
 
   it('should return false', () => {
-    const result = isUrlString('ihttps://example.com');
+    const result = validateUrlString('ihttps://example.com');
     expect(result).toBe(false);
   });
 
   it('should return false', () => {
-    const result = isUrlString('https://example!com');
+    const result = validateUrlString('https://example!com');
     expect(result).toBe(false);
   });
 

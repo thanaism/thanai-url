@@ -1,6 +1,6 @@
 import { PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 import s3Client from './s3Client';
-import { LinkType } from './utilities';
+import { LinkType } from './validators';
 
 const bucketParams = (
   url: string,
