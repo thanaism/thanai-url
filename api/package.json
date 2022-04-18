@@ -11,7 +11,7 @@
     "start": "func start",
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest --verbose --testPathPattern \"/unit/.+\\.test\\.\"",
-    "test:e2e": "npm run prestart && jest --verbose --testPathPattern \"/e2e/.+\\.test\\.\" --runInBand",
+    "test:e2e": "npm run prestart && jest --verbose --testPathPattern \"/e2e/.+\\.test\\.\" --runInBand --passWithNoTests",
     "start-azurite": "azurite --silent --location azureStorage --debug azureStorage/debug.log"
   },
   "dependencies": {
