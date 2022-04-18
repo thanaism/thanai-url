@@ -7,10 +7,21 @@ const InputForm: VFC = () => {
   const [input, setInput] = useState('https://');
   const [error, setError] = useState(false);
   const [output, setOutput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
   const [previousInput, setPreviousInput] = useState('');
 
   const result = async (): Promise<void> => {
-    if (input === previousInput) return;
+    if (input === previousInput) {
+      setCopied(false);
+      setOutput('');
+      setInput('https://');
+
+      return;
+    }
+    setLoading(true);
+    setCopied(false);
+    setOutput('');
     await axios
       .post(`/api/upload`, { url: input, alias: '' })
       .then((res) => {
@@ -20,9 +31,11 @@ const InputForm: VFC = () => {
       .catch(
         (_) => setError(true), // eslint-disable-line
       );
+    setLoading(false);
   };
   const copyLinkToClipboard = async (): Promise<void> => {
     await navigator.clipboard.writeText(output);
+    setCopied(true);
   };
 
   return (
@@ -39,7 +52,8 @@ const InputForm: VFC = () => {
               icon="linkify"
               size="large"
               iconPosition="left"
-              placeholder={input}
+              value={input}
+              readOnly={!!output}
               error={
                 error && {
                   content: 'Please enter a valid URL',
@@ -52,9 +66,15 @@ const InputForm: VFC = () => {
               }}
             />
 
-            <Button color="vk" fluid size="medium" onClick={result}>
-              <Icon name="sync" />
-              URL Shrink
+            <Button
+              loading={loading}
+              color="vk"
+              fluid
+              size="medium"
+              onClick={result}
+            >
+              {output ? <Icon name="lightbulb" /> : <Icon name="sync" />}
+              {output ? 'Try another one?' : 'Shrink URL'}
             </Button>
 
             {output && (
@@ -65,7 +85,9 @@ const InputForm: VFC = () => {
                   </a>
                 </Grid.Column>
                 <Grid.Column>
-                  <Button onClick={copyLinkToClipboard}>Copy the link!</Button>
+                  <Button onClick={copyLinkToClipboard}>
+                    {copied ? 'Copied!' : 'Copy the link!'}
+                  </Button>
                 </Grid.Column>
               </Message>
             )}
