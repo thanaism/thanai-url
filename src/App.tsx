@@ -6,6 +6,7 @@ import LoginButton from 'LoginButton';
 import { Container, Grid } from 'semantic-ui-react';
 import PreviewMessage from 'PreviewMessage';
 import AuthorLink from 'AuthorLink';
+import Ad from 'Ad';
 
 type ClientPricipal = {
   clientPrincipal: {
@@ -42,7 +43,12 @@ const App: VFC = () => {
             <AuthorLink />
           </Grid.Column>
         </Grid.Row>
-        <LoginButton username={username} />
+        <Grid.Row>
+          <LoginButton username={username} />
+        </Grid.Row>
+        <Grid.Row>
+          <Ad />
+        </Grid.Row>
       </Grid>
     </Container>
   );
