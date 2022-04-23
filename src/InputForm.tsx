@@ -33,6 +33,7 @@ const InputForm: VFC<{ username: string }> = (props) => {
     if (loading) return;
     if (output) {
       setOutput('');
+      setAliasInput('');
       setUrlInput('https://');
 
       return;
