@@ -1,8 +1,7 @@
-import { validateConnectionString, validateUrlString } from './validators';
+import { validateUrlString } from './validators';
 
 export type EnvironmentVariables = {
-  ABS_CONNECTION_STRING: string;
-  ABS_BASE_URL: string;
+  ALIAS_DEFAULT_LENGTH: number;
   CDN_BASE_URL: string;
   AWS_ACCESS_KEY_ID: string;
   AWS_SECRET_ACCESS_KEY: string;
@@ -13,8 +12,7 @@ export type EnvironmentVariables = {
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 export const environmentVariables: EnvironmentVariables = {
-  ABS_CONNECTION_STRING: process.env.ABS_CONNECTION_STRING!,
-  ABS_BASE_URL: process.env.ABS_BASE_URL!,
+  ALIAS_DEFAULT_LENGTH: 4,
   CDN_BASE_URL: process.env.CDN_BASE_URL!,
   AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID!,
   AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY!,
@@ -27,22 +25,19 @@ export const environmentVariables: EnvironmentVariables = {
 export const errorEnviromentVariables: string[] = Object.entries(environmentVariables).flatMap(
   ([key, value]) => {
     if (value == null) return [key];
-
-    switch (key) {
-      case 'ABS_CONNECTION_STRING':
-        if (!validateConnectionString(value)) return [key];
-        break;
-      case 'ABS_BASE_URL':
-      case 'CDN_BASE_URL':
-      case 'S3_BASE_URL':
-        if (!validateUrlString(value)) return [key];
-        break;
-      case 'AWS_ACCESS_KEY_ID':
-      case 'AWS_SECRET_ACCESS_KEY':
-      case 'S3_REGION':
-      case 'S3_BUCKET_NAME':
-      default:
-    }
+    if (typeof value === 'string')
+      switch (key) {
+        case 'CDN_BASE_URL':
+        case 'S3_BASE_URL':
+          if (!validateUrlString(value)) return [key];
+          break;
+        case 'ALIAS_DEFAULT_LENGTH':
+        case 'AWS_ACCESS_KEY_ID':
+        case 'AWS_SECRET_ACCESS_KEY':
+        case 'S3_REGION':
+        case 'S3_BUCKET_NAME':
+        default:
+      }
 
     return [];
   },

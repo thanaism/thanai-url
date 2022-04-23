@@ -2,11 +2,9 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import HTTP_CODES from 'http-status-enum';
 import { getBlobName } from './alias';
-import { ALIAS_DEFAULT_LENGTH } from './constant';
 import { environmentVariables, errorEnviromentVariables } from './environmentVariables';
 import uploadToS3 from './s3Upload';
-import upload from './upload';
-import { getLinkType, getUrl, getBlobType } from './validators';
+import { getLinkType, getUrl } from './validators';
 
 const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): Promise<void> => {
   context.log('upload HTTP trigger function processed a request.');
@@ -45,16 +43,11 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   }
   context.log(`URL: "${url}"`);
 
-  // Get blob type that determines which cloud service is used
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-  const blobType = getBlobType(req.body?.blobType);
-
-  // Validate user defined alias and get blob name
   const blobName = await getBlobName(
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     req.body?.alias,
-    ALIAS_DEFAULT_LENGTH,
-    blobType === 'aws' ? ENVS.S3_BASE_URL : ENVS.ABS_BASE_URL,
+    ENVS.ALIAS_DEFAULT_LENGTH,
+    ENVS.S3_BASE_URL,
   );
   if (blobName === '') {
     res.body = 'Request parameter "alias" isn\'t configured correctly or already in use.';
@@ -70,10 +63,7 @@ const httpTrigger: AzureFunction = async (context: Context, req: HttpRequest): P
   const linkType = getLinkType(req.body?.linkType);
   context.log(`Link type: "${linkType}"`);
 
-  const uploadResult =
-    blobType === 'aws'
-      ? await uploadToS3(url, blobName, linkType)
-      : await upload(url, blobName, linkType);
+  const uploadResult = await uploadToS3(url, blobName, linkType);
 
   if (!uploadResult) {
     res.status = HTTP_CODES.INTERNAL_SERVER_ERROR;
