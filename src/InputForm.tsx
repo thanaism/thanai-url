@@ -1,7 +1,15 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import axios from 'axios';
 import { useState, VFC } from 'react';
-import { Grid, Form, Button, Message, Icon, Segment } from 'semantic-ui-react';
+import {
+  Grid,
+  Form,
+  Button,
+  Message,
+  Icon,
+  Segment,
+  Radio,
+} from 'semantic-ui-react';
 import useWindowDimensions from 'useWindowDimentsions';
 
 const InputForm: VFC<{ username: string }> = (props) => {
@@ -11,6 +19,7 @@ const InputForm: VFC<{ username: string }> = (props) => {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [linkType, setLinkType] = useState('OneDay');
   const [aliasInput, setAliasInput] = useState('');
   const [aliasError, setAliasError] = useState(false);
   const [aliasErrorMessage, setAliasErrorMessage] = useState({
@@ -45,7 +54,7 @@ const InputForm: VFC<{ username: string }> = (props) => {
       .post(`/api/upload`, {
         url: urlInput,
         alias: aliasInput,
-        linkType: username === '' ? 'OneDay' : 'OneMonth',
+        linkType,
       })
       .then((res) => {
         setOutput(res.data);
@@ -61,6 +70,7 @@ const InputForm: VFC<{ username: string }> = (props) => {
       );
     setLoading(false);
   };
+
   const copyLinkToClipboard = async (): Promise<void> => {
     await navigator.clipboard.writeText(output);
     setCopied(true);
@@ -69,6 +79,33 @@ const InputForm: VFC<{ username: string }> = (props) => {
   return (
     <Segment raised>
       <Form size="large">
+        {!!username && (
+          <Form.Group inline>
+            <label>Retention period</label>
+            <Form.Field
+              control={Radio}
+              label="a day"
+              value="OneDay"
+              checked={linkType === 'OneDay'}
+              onChange={() => setLinkType('OneDay')}
+            />
+            <Form.Field
+              control={Radio}
+              label="a month"
+              value="OneMonth"
+              checked={linkType === 'OneMonth'}
+              onChange={() => setLinkType('OneMonth')}
+            />
+            <Form.Field
+              control={Radio}
+              label="permanent"
+              value="Permanent"
+              checked={linkType === 'Permanent'}
+              onChange={() => setLinkType('Permanent')}
+            />
+          </Form.Group>
+        )}
+
         <Form.Input
           fluid
           icon="linkify"

@@ -11,7 +11,7 @@ const PreviewMessage: VFC<{ username: string }> = (props) => {
       </Message.Header>
       {username === ''
         ? 'Every URL will be deleted after a day.'
-        : `Hi, ${username}! Your link is valid for 1 month!`}
+        : `Hi, ${username}! You can choose the retention preriod!`}
     </Message>
   );
 };

@@ -28,7 +28,7 @@ const App: VFC = () => {
           setUsername(res.data.clientPrincipal.userDetails);
         });
     })();
-  });
+  }, []);
 
   return (
     <Container style={{ padding: '1rem' }}>
