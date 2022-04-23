@@ -2,7 +2,7 @@ import {
   available,
   validateAlias,
   validateFormat,
-  pickAlias,
+  generateAlias,
   getBlobName,
 } from '../../upload/alias';
 
@@ -43,8 +43,8 @@ describe('alias unit tests', () => {
   });
 
   it('should return avilable alias', async () => {
-    const result = await pickAlias(4, 'https://++++/');
-    expect(result).toMatch(/[\w#./+-]{4,10}/);
+    const result = await generateAlias(4, 'https://++++/');
+    expect(result).toMatch(/[-.!\w]{4,10}/);
   });
 
   it('should return original alias', async () => {
@@ -59,11 +59,11 @@ describe('alias unit tests', () => {
 
   it('should return new alias', async () => {
     const result = await getBlobName('', 4, 'https://example.com/');
-    expect(result).toMatch(/[\w#./+-]{4,10}/);
+    expect(result).toMatch(/[-.!\w]{4,10}/);
   });
 
   it('should return new alias', async () => {
     const result = await getBlobName(undefined, 4, 'https://example.com/');
-    expect(result).toMatch(/[\w#./+-]{4,10}/);
+    expect(result).toMatch(/[-.!\w]{4,10}/);
   });
 });

@@ -7,9 +7,7 @@ const PreviewMessage: VFC<{ username: string }> = (props) => {
   return (
     <Message warning={!username} positive={!!username}>
       <Message.Header>
-        {username === ''
-          ? 'This page is a test product.'
-          : 'Thank you for login!'}
+        {username === '' ? 'This is a test product.' : 'Thank you for login!'}
       </Message.Header>
       {username === ''
         ? 'Every URL will be deleted after a day.'

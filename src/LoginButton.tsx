@@ -7,18 +7,12 @@ const LoginButton: VFC<{ username: string }> = (props) => {
   return (
     <>
       {!username && (
-        <Button
-          size="huge"
-          secondary
-          inverted
-          as="a"
-          href="/.auth/login/twitter"
-        >
+        <Button secondary inverted as="a" href="/.auth/login/twitter">
           Login
         </Button>
       )}
       {!!username && (
-        <Button size="huge" secondary inverted as="a" href="/.auth/logout">
+        <Button secondary inverted as="a" href="/.auth/logout">
           Logout
         </Button>
       )}

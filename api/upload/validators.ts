@@ -1,20 +1,12 @@
-export const validateConnectionString = (value: string): boolean =>
-  /DefaultEndpointsProtocol=[^;]+;AccountName=[^;]+;AccountKey=[^;]+;EndpointSuffix=.+/.test(
-    value,
-  ) || value === 'UseDevelopmentStorage=true';
-
 export const validateUrlString = (value: string): boolean =>
-  /^https?:\/\/[\w/:%#$&?()~.=+-]+$/.test(value);
+  value.length <= 4096 &&
+  /^https?:\/\/[-0-9a-zA-Z.]{4,255}(\/[\w/:%#$&?()~.=+-]*)?$/.test(value) &&
+  /^https?:\/\/([-0-9a-zA-Z]{1,63}\.)+[a-z]{2,}(\/[\w/:%#$&?()~.=+-]*)?$/.test(value);
 
 const linkTypeArray = ['OneDay', 'OneMonth', 'Permanent'] as const;
 export type LinkType = typeof linkTypeArray[number];
 export const getLinkType = (value: unknown): LinkType =>
   linkTypeArray.some((v) => v === value) ? (value as LinkType) : 'OneDay';
-
-const blobTypeArray = ['azure', 'aws'] as const;
-export type BlobType = typeof blobTypeArray[number];
-export const getBlobType = (value: unknown): BlobType =>
-  blobTypeArray.some((v) => v === value) ? (value as BlobType) : 'aws';
 
 export const getUrl = (value: unknown): string =>
   typeof value === 'string' && validateUrlString(value) ? value : '';

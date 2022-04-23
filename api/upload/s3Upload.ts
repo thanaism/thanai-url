@@ -1,13 +1,14 @@
 import { PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 import s3Client from './s3Client';
 import { LinkType } from './validators';
+import { environmentVariables } from './environmentVariables';
 
 const bucketParams = (
   url: string,
   blobName: string,
   linkType: LinkType,
 ): PutObjectCommandInput => ({
-  Bucket: process.env.S3_BUCKET_NAME,
+  Bucket: environmentVariables.S3_BUCKET_NAME,
   Key: blobName,
   Body: undefined,
   WebsiteRedirectLocation: url,

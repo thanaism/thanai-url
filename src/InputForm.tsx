@@ -2,20 +2,38 @@
 import axios from 'axios';
 import { useState, VFC } from 'react';
 import { Grid, Form, Button, Message, Icon, Segment } from 'semantic-ui-react';
+import useWindowDimensions from 'useWindowDimentsions';
 
 const InputForm: VFC<{ username: string }> = (props) => {
   const { username } = props;
-  const [input, setInput] = useState('https://');
-  const [error, setError] = useState(false);
+  const [urlInput, setUrlInput] = useState('https://');
+  const [urlError, setUrlError] = useState(false);
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [aliasInput, setAliasInput] = useState('');
+  const [aliasError, setAliasError] = useState(false);
+  const [aliasErrorMessage, setAliasErrorMessage] = useState({
+    content: 'must be alphanumeric in 4-10 chars',
+    ointing: 'below',
+  });
+  const { width } = useWindowDimensions();
+
+  const validateUrlString = (value: string): boolean =>
+    value.length <= 4096 &&
+    /^https?:\/\/[-0-9a-zA-Z.]{4,255}(\/[\w/:%#$&?()~.=+-]*)?$/.test(value) &&
+    /^https?:\/\/([-0-9a-zA-Z]{1,63}\.)+[a-z]{2,}(\/[\w/:%#$&?()~.=+-]*)?$/.test(
+      value,
+    );
+
+  const validateAlias = (value: string): boolean =>
+    /^[-.!\w]{4,10}$/.test(value);
 
   const result = async (): Promise<void> => {
     if (loading) return;
     if (output) {
       setOutput('');
-      setInput('https://');
+      setUrlInput('https://');
 
       return;
     }
@@ -24,15 +42,21 @@ const InputForm: VFC<{ username: string }> = (props) => {
     setCopied(false);
     await axios
       .post(`/api/upload`, {
-        url: input,
-        alias: '',
+        url: urlInput,
+        alias: aliasInput,
         linkType: username === '' ? 'OneDay' : 'OneMonth',
       })
       .then((res) => {
         setOutput(res.data);
       })
       .catch(
-        (_) => setError(true), // eslint-disable-line
+        (_) => {
+          setAliasError(true);
+          setAliasErrorMessage({
+            content: 'This alias is already used.',
+            ointing: 'below',
+          });
+        }, // eslint-disable-line
       );
     setLoading(false);
   };
@@ -49,30 +73,55 @@ const InputForm: VFC<{ username: string }> = (props) => {
           icon="linkify"
           size="large"
           iconPosition="left"
-          value={input}
+          placeholder="https://"
+          value={urlInput}
           readOnly={!!output}
           error={
-            error && {
+            urlError && {
               content: 'Please enter a valid URL',
               ointing: 'below',
             }
           }
           onChange={(e) => {
-            setError(false);
-            setInput(e.target.value);
+            setUrlError(false);
+            if (e.target.value && !validateUrlString(e.target.value))
+              setUrlError(true);
+            setUrlInput(e.target.value);
           }}
         />
 
-        <Button
-          loading={loading}
-          color="vk"
-          fluid
-          size="medium"
-          onClick={result}
-        >
-          {output ? <Icon name="lightbulb" /> : <Icon name="sync" />}
-          {output ? 'Try another one?' : 'Shrink URL'}
-        </Button>
+        <Form.Group grouped={width < 800}>
+          <Form.Input
+            readOnly={!!output}
+            value={aliasInput}
+            iconPosition="left"
+            icon="quote left"
+            placeholder="alias"
+            error={aliasError && aliasErrorMessage}
+            onChange={(e) => {
+              setAliasError(false);
+              if (e.target.value && !validateAlias(e.target.value)) {
+                setAliasErrorMessage({
+                  content: 'must be alphanumeric in 4-10 chars',
+                  ointing: 'below',
+                });
+                setAliasError(true);
+              }
+              setAliasInput(e.target.value);
+            }}
+          />
+          <Button
+            loading={loading}
+            color="vk"
+            fluid
+            size="medium"
+            onClick={result}
+            disabled={urlError || aliasError}
+          >
+            {output ? <Icon name="lightbulb" /> : <Icon name="sync" />}
+            {output ? 'Try another one?' : 'Shrink URL'}
+          </Button>
+        </Form.Group>
 
         {output && (
           <Message>
