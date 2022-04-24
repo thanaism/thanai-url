@@ -1,15 +1,7 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 import axios from 'axios';
 import { useState, VFC } from 'react';
-import {
-  Grid,
-  Form,
-  Button,
-  Message,
-  Icon,
-  Segment,
-  Radio,
-} from 'semantic-ui-react';
+import { Grid, Form, Button, Message, Icon, Segment } from 'semantic-ui-react';
 import useWindowDimensions from 'useWindowDimentsions';
 
 const InputForm: VFC<{ username: string }> = (props) => {
@@ -19,6 +11,7 @@ const InputForm: VFC<{ username: string }> = (props) => {
   const [output, setOutput] = useState('');
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [serverError, setServerError] = useState(false);
   const [linkType, setLinkType] = useState('OneDay');
   const [aliasInput, setAliasInput] = useState('');
   const [aliasError, setAliasError] = useState(false);
@@ -59,15 +52,20 @@ const InputForm: VFC<{ username: string }> = (props) => {
       .then((res) => {
         setOutput(res.data);
       })
-      .catch(
-        (_) => {
-          setAliasError(true);
-          setAliasErrorMessage({
-            content: 'This alias is already used.',
-            ointing: 'below',
-          });
-        }, // eslint-disable-line
-      );
+      .catch((err) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        switch (err.response.status) {
+          case 400:
+            setAliasError(true);
+            setAliasErrorMessage({
+              content: 'This alias is already used.',
+              ointing: 'below',
+            });
+            break;
+          default:
+            setServerError(true);
+        }
+      });
     setLoading(false);
   };
 
@@ -76,34 +74,26 @@ const InputForm: VFC<{ username: string }> = (props) => {
     setCopied(true);
   };
 
+  const retentionPeriodOptions = [
+    { key: 'One-Day', text: 'One-Day', value: 'OneDay' },
+    { key: 'One-Month', text: 'One-Month', value: 'OneMonth' },
+    { key: 'Permanent', text: 'Permanent', value: 'Permanent' },
+  ];
+
   return (
     <Segment raised>
       <Form size="large">
         {!!username && (
-          <Form.Group inline>
-            <label>Retention period</label>
-            <Form.Field
-              control={Radio}
-              label="a day"
-              value="OneDay"
-              checked={linkType === 'OneDay'}
-              onChange={() => setLinkType('OneDay')}
-            />
-            <Form.Field
-              control={Radio}
-              label="a month"
-              value="OneMonth"
-              checked={linkType === 'OneMonth'}
-              onChange={() => setLinkType('OneMonth')}
-            />
-            <Form.Field
-              control={Radio}
-              label="permanent"
-              value="Permanent"
-              checked={linkType === 'Permanent'}
-              onChange={() => setLinkType('Permanent')}
-            />
-          </Form.Group>
+          <Form.Dropdown
+            placeholder="Select Retention Period"
+            fluid
+            button
+            selection
+            options={retentionPeriodOptions}
+            onChange={(_, data) =>
+              setLinkType(typeof data.value === 'string' ? data.value : '')
+            }
+          />
         )}
 
         <Form.Input
@@ -154,7 +144,9 @@ const InputForm: VFC<{ username: string }> = (props) => {
             fluid
             size="medium"
             onClick={result}
-            disabled={urlError || aliasError}
+            disabled={
+              urlError || aliasError || serverError || urlInput === 'https://'
+            }
           >
             {output ? <Icon name="lightbulb" /> : <Icon name="sync" />}
             {output ? 'Try another one?' : 'Shrink URL'}
@@ -173,6 +165,19 @@ const InputForm: VFC<{ username: string }> = (props) => {
                 {copied ? 'Copied!' : 'Copy the link!'}
               </Button>
             </Grid.Column>
+          </Message>
+        )}
+
+        {serverError && (
+          <Message negative>
+            <Icon name="circle notched" loading />
+            <span style={{ whiteSpace: 'nowrap' }}>
+              The server is down,
+            </span>{' '}
+            &ensp;
+            <span style={{ whiteSpace: 'nowrap' }}>
+              Please try again after a while.
+            </span>
           </Message>
         )}
       </Form>

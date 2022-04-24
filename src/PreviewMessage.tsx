@@ -9,9 +9,16 @@ const PreviewMessage: VFC<{ username: string }> = (props) => {
       <Message.Header>
         {username === '' ? 'This is a test product.' : 'Thank you for login!'}
       </Message.Header>
-      {username === ''
-        ? 'Every URL will be deleted after a day.'
-        : `Hi, ${username}! You can choose the retention preriod!`}
+      {username === '' ? (
+        'Every URL will be deleted after a day.'
+      ) : (
+        <>
+          Hi, {username}!&ensp;
+          <span style={{ whiteSpace: 'nowrap' }}>
+            You can choose the retention preriod!{' '}
+          </span>{' '}
+        </>
+      )}
     </Message>
   );
 };
