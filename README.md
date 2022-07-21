@@ -1,5 +1,9 @@
 # ThanaiURL
 
+## URLs can be made very short!
+
+Go to [hy.gy](https://hy.gy) and give it a try!
+
 ## Why ThanaiURL?
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
